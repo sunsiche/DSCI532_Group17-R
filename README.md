@@ -1,4 +1,4 @@
-# FIFA Star Board
+# FIFA Star Board (R Version)
 
 Group repository for DSCI 532, Group 17
 
