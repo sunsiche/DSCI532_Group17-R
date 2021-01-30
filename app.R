@@ -2,13 +2,17 @@ library(dash)
 library(dashCoreComponents)
 library(dashHtmlComponents)
 library(dashBootstrapComponents)
+library(dashTable)
 library(ggplot2)
 library(plotly)
 library(purrr)
 library(tidyverse)
-# source("data_manager.R")
+source("data_manager.R")
 
-data <- read_csv('../data/processed/processed_data.csv')
+
+data <- read_csv('data/processed/processed_data.csv')
+table <- make_table(data)
+charts <- plot_altair(data)
 
 app <- Dash$new(external_stylesheets = dbcThemes$BOOTSTRAP)
 
@@ -58,13 +62,20 @@ app$layout(
               htmlH4('Select Attributes:'),
               dccDropdown(
                 id='attribute-widget',
-                value=list('Name', 'Nationality', 'Age', 'Value(m_sign)', 'Overall'),
+                value=list('Name', 'Nationality', 'Age', 'Value(€)"', 'Overall'),
                 options=(data %>% colnames) %>% map(function(col) list(label = col, value = col)),
                 multi=TRUE
                 ),
-              dccGraph(
-                id='table',
-                style=list('border-width'= '0', 'width' = '100%', 'height' = '500px')
+              dashDataTable(
+                id = "table",
+                columns = lapply(colnames(table), 
+                                 function(colName){
+                                   list(
+                                     id = colName,
+                                     name = colName
+                                   )
+                                 }),
+                data = df_to_list(table)
                 )
               )),
          dbcCol(
@@ -75,9 +86,15 @@ app$layout(
                ),
              htmlDiv('Top 10 by Club and by Nationality'),
              dccGraph(
-               id='charts',
-               style=list('border-width'= '0', 'width' = '150%', 'height' = '700px')
-               )
+               id='charts-1',
+               figure = ggplotly(charts[[1]]),
+               style=list('border-width'= '0', 'width' = '150%', 'height' = '350px')
+               ),
+             dccGraph(
+               id='charts-2',
+               figure = ggplotly(charts[[2]]),
+               style=list('border-width'= '0', 'width' = '150%', 'height' = '350px')
+             )
            ), md=3)
           )))))
     
@@ -112,8 +129,6 @@ app$layout(
 #     
 #   }
 # )
-
-
 
 
 app$run_server(debug = T)
