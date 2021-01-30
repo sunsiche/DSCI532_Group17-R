@@ -11,6 +11,8 @@ source("data_manager.R")
 
 
 data <- read_csv('data/processed/processed_data.csv')
+colnames(data)[8] <- "Value(\u20AC)"
+colnames(data)[9] <- "Wage(\u20AC)"
 table <- make_table(data)
 charts <- plot_altair(data)
 
@@ -62,7 +64,7 @@ app$layout(
               htmlH4('Select Attributes:'),
               dccDropdown(
                 id='attribute-widget',
-                value=list('Name', 'Nationality', 'Age', 'Value(€)"', 'Overall'),
+                value=list('Name', 'Nationality', 'Age', 'Value(\u20AC)', 'Overall'),
                 options=(data %>% colnames) %>% map(function(col) list(label = col, value = col)),
                 multi=TRUE
                 ),
@@ -99,7 +101,7 @@ app$layout(
           )))))
     
 # updates table from all 5 dropdowns
-# app$callback(
+#app$callback(
 #   output(id = 'table', property = 'figure'),
 #   list(input('rankby-widget', 'value'),
 #        input('order-widget', 'value'),
@@ -117,18 +119,18 @@ app$layout(
 
 # updates charts with Rank-by selection 
 # updates only when selected col is numeric
-# app$callback(
-#   output(id = 'charts', property = 'figure'),
-#   list(input('rankby-widget', 'value')),
-#   function(by){
-#     if (is_numeric(data$by) == FALSE){
-#       return charts
-#     } else{
-#       plot_altair(data, by=by)
-#     }
-#     
-#   }
-# )
+app$callback(
+   output(id = 'charts', property = 'figure'),
+   list(input('rankby-widget', 'value')),
+   function(by){
+     if (is_numeric(data$by) == FALSE){
+       return(charts)
+     } else{
+       plot_altair(data, by=by)
+     }
+     
+   }
+ )
 
 
 app$run_server(debug = T)
