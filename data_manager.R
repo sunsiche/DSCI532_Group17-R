@@ -9,7 +9,7 @@ library(tidyverse)
 
 # make initial table, land-on page
 make_table <- function(data) {
-    table <- data %>% select(Name, Nationality, Age, `Value(€)`, Overall) %>% 
+    table <- data %>% select(Name, Nationality, Age, "Value(\u20AC)", Overall) %>% 
         arrange('Overall', ascending=FALSE) %>%
         head(15)
     
