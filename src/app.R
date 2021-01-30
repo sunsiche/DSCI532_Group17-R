@@ -5,7 +5,10 @@ library(dashBootstrapComponents)
 library(ggplot2)
 library(plotly)
 library(purrr)
-source("data_manager.R")
+library(tidyverse)
+# source("data_manager.R")
+
+data <- read_csv('../data/processed/processed_data.csv')
 
 app <- Dash$new(external_stylesheets = dbcThemes$BOOTSTRAP)
 
@@ -18,8 +21,8 @@ app$layout(
           dbcCol(
             list(
               htmlDiv(
-                id='placebolder-left',
-                style={'height': '20vh'}
+                  id='placebolder-left',
+                  style=list('height' = '20vh')
                 ),
               htmlDiv('Rank By:'),
               dccDropdown(
@@ -40,76 +43,75 @@ app$layout(
               dccDropdown(
                 id='filter-cont-widget',
                 value='',
-                options=map(unique(data$Continent), function(val) list(label = val, value= val))
+                options=map(unique(data$Continent), function(val) list(label = val, value = val))
                 ),
               htmlBr(),
               htmlDiv('Club:'),
               dccDropdown(
                 id='filter-club-widget',
                 value='',
-                options=map(unique(data$Club), function(val) list(label = val, value= val))
-                )
-              ), md=3),
+                options=map(unique(data$Club[!is.na(data$Club)]), function(val) list(label = val, value = val))
+              )), md=3),
           dbcCol(
             list(
               htmlH1('FIFA STAR BOARD', style=list(width= '50vh', height= '10vh')),
               htmlH4('Select Attributes:'),
               dccDropdown(
                 id='attribute-widget',
-                value=list('Name', 'Nationality', 'Age', 'Value(???)', 'Overall'),
+                value=list('Name', 'Nationality', 'Age', 'Value(m_sign)', 'Overall'),
                 options=(data %>% colnames) %>% map(function(col) list(label = col, value = col)),
-                multi=True
+                multi=TRUE
                 ),
               dccGraph(
                 id='table',
                 style=list('border-width'= '0', 'width' = '100%', 'height' = '500px')
-                ),
+                )
               )),
          dbcCol(
            list(
              htmlDiv(
                id='placebolder-right',
-               style={'height': '10vh'}
+               style=list('height' = '10vh')
                ),
              htmlDiv('Top 10 by Club and by Nationality'),
              dccGraph(
                id='charts',
                style=list('border-width'= '0', 'width' = '150%', 'height' = '700px')
-               ),
+               )
            ), md=3)
           )))))
     
 # updates table from all 5 dropdowns
-app$callback(
-  output(id = 'table', property = 'figure'),
-  list(input('rankby-widget', 'value'),
-       input('order-widget', 'value'),
-       input('attribute-widget', 'value'),
-       input('filter-cont-widget', 'value'),
-       input('filter-club-widget', 'value')),
-  function(by, order, cols, filter_cont, filter_club){
-    update_table(data, by, order == "True", cols, filter_cont, filter_club)
-    
-  }
-)
+# app$callback(
+#   output(id = 'table', property = 'figure'),
+#   list(input('rankby-widget', 'value'),
+#        input('order-widget', 'value'),
+#        input('attribute-widget', 'value'),
+#        input('filter-cont-widget', 'value'),
+#        input('filter-club-widget', 'value')),
+#   function(by, order, cols, filter_cont, filter_club){
+#     update_table(data, by, order == "True", cols, filter_cont, filter_club)
+#     
+#   }
+# )
 
 
 
 
 # updates charts with Rank-by selection 
 # updates only when selected col is numeric
-app$callback(
-  output(id = 'charts', property = 'figure'),
-  list(input('rankby-widget', 'value')),
-  function(by){
-    if (is_numeric(data$by) == FALSE){
-      return charts
-    } else{
-      plot_altair(data, by=by)
-    }
-    
-  }
-)
+# app$callback(
+#   output(id = 'charts', property = 'figure'),
+#   list(input('rankby-widget', 'value')),
+#   function(by){
+#     if (is_numeric(data$by) == FALSE){
+#       return charts
+#     } else{
+#       plot_altair(data, by=by)
+#     }
+#     
+#   }
+# )
 
 
 
