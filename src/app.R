@@ -6,9 +6,10 @@ library(ggplot2)
 library(plotly)
 library(purrr)
 library(tidyverse)
-# source("data_manager.R")
+source("data_manager.R")
 
 data <- read_csv('../data/processed/processed_data.csv')
+table <- make_table(data)
 
 app <- Dash$new(external_stylesheets = dbcThemes$BOOTSTRAP)
 
@@ -58,12 +59,13 @@ app$layout(
               htmlH4('Select Attributes:'),
               dccDropdown(
                 id='attribute-widget',
-                value=list('Name', 'Nationality', 'Age', 'Value(m_sign)', 'Overall'),
+                value=list('Name', 'Nationality', 'Age', 'Value(€)"', 'Overall'),
                 options=(data %>% colnames) %>% map(function(col) list(label = col, value = col)),
                 multi=TRUE
                 ),
               dccGraph(
                 id='table',
+                srcDoc = table,
                 style=list('border-width'= '0', 'width' = '100%', 'height' = '500px')
                 )
               )),
@@ -112,8 +114,6 @@ app$layout(
 #     
 #   }
 # )
-
-
 
 
 app$run_server(debug = T)

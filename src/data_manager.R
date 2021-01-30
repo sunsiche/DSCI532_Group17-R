@@ -8,8 +8,8 @@ library(purrr)
 library(tidyverse)
 
 # make initial table, land-on page
-make_table <- funciton(data){
-    table <- data %>% select(Name, Nationality, Age, Value(€), Overall) %>% 
+make_table <- function(data) {
+    table <- data %>% select(Name, Nationality, Age, `Value(€)`, Overall) %>% 
         arrange('Overall', ascending=FALSE) %>%
         head(15)
     
