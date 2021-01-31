@@ -53,6 +53,8 @@ plot_altair <- function(data, by=Overall, by_str='Overall', ascending=FALSE, sho
     #     labs(x = 'Nationality', y = by_str) +
     #     theme(axis.text.x = element_text(angle = 45, vjust = 0.8, hjust=0.5))  
 
+
+
     # chart_nationality <- df %>% 
     #     group_by(Club) %>% 
     #     summarise({{by}} := mean({{by}})) %>% 
@@ -63,7 +65,6 @@ plot_altair <- function(data, by=Overall, by_str='Overall', ascending=FALSE, sho
     #     labs(x = 'Club', y = by_str) +
     #     theme(axis.text.x = element_text(angle = 45, vjust = 0.8, hjust=0.5))   
 
-     
 
     return(list(nation_chart, club_chart))
 }
